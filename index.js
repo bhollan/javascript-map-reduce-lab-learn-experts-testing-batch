@@ -1,3 +1,5 @@
+'use strict';
+
 const issues = [
   {
     "body": "Instructions say GET /team and POST /newteam. Rspec wants GET/newteam and POST/team.",
@@ -9002,7 +9004,29 @@ const issues = [
 ];
 
 const issuesWithUpdatedApiUrl = issues.map(function(issue){
-  output = Object.assign({}, issue);
-  output.url = output.url.replace(/api.github.com/, 'api-v2.github.com');
-  return output;
+  const gobbldeegookness = Object.assign({}, issue);
+  gobbldeegookness.url = gobbldeegookness.url.replace(/api.github.com/, 'api-v2.github.com');
+  return gobbldeegookness;
 });
+
+const commentCountAcrossIssues = issues.map(issue => {
+  return issue.comments_count;
+}).reduce((previous, current) => {
+  return previous + current;
+}, 0);
+
+const openIssues = issues.filter(issue => {
+  return issue.state == 'open';
+});
+
+const nonAutomaticIssues = issues.filter(issue => {
+  return !issue.body.includes("This pull request has been automatically created by learn.co.");
+});
+
+// using jQuery does NOT work.
+// const $results = $('#results');
+// you have to use 'documnt' itself
+const $results = document.getElementById('results');
+$results.innerHTML = nonAutomaticIssues.map(issue =>
+  `<tr><td>${issue.body}</td><td>${issue.created_at}</td><td>${issue.state}</td></tr>`
+).join('');
